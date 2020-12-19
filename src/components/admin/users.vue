@@ -43,7 +43,7 @@
           <button v-else @click="save(item.id)" class="btn btn-dark">Save</button>
 
         </td>
-        <td><span class="btn btn-danger">Delete</span></td>
+        <td><span @click="del(item.id)" class="btn btn-danger">Delete</span></td>
 
         <td>
 
@@ -94,27 +94,55 @@ name: "users",
           'Authorization': token
         }
       }).then(res => {
-        //sharunakutyuny vaxy
+        console.log(res.data)
+        this.users.forEach((user)=> {
+          if (user.id === res.data.id) {
+            user = res.data
+
+          }
+        });
 
       }).catch(err=>{
 
       })
     },
   edit(id){
-    const token = `Bearer ${localStorage.getItem('access_token')}`
-    axios.post('http://127.0.0.1:8000/api/admin/users/edit'+id, null, {
-      headers: {
-        'Authorization': token
+    // const token = `Bearer ${localStorage.getItem('access_token')}`
+    // axios.post('http://127.0.0.1:8000/api/admin/users/edit'+id, null, {
+    //   headers: {
+    //     'Authorization': token
+    //   }
+    // }).then(res => {
+    //   this.active_data.id=id
+    //   this.edit_data=res.data
+    //
+    // }).catch(err=>{
+    //   console.log(err)
+    // })
+    this.active_data.id=id
+    this.users.forEach((user)=> {
+      if (user.id === id) {
+        this.edit_data=user
       }
-    }).then(res => {
-      this.active_data.id=id
-      this.edit_data=res.data
-
-    }).catch(err=>{
-      console.log(err)
     })
 
-  }}
+  },
+    del(id){
+      const token = `Bearer ${localStorage.getItem('access_token')}`
+      axios.post('http://127.0.0.1:8000/api/admin/users/delete'+id, null, {
+        headers: {
+          'Authorization': token
+        }
+      }).then(res => {
+        console.log(res.data)
+        this.users = this.users.filter((user) => user.id !== res.data)
+      }).catch(err=>{
+        console.log(err)
+
+      })
+
+  }
+}
 }
 </script>
 
