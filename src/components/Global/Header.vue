@@ -21,28 +21,40 @@
               <span class="sr-only">(current)</span>
             </a>
           </li>
-          <li class="nav-item">
-            <router-link class="nav-link" to="/Login">Login</router-link>
-          </li>
-          <li class="nav-item">
+
+          <li  v-if="user===null" class="nav-item">
             <router-link class="nav-link" to="/signup">Register</router-link>
           </li>
-          <li>
-            <router-link class="nav-link" to="/signup" @click="logout($event)">Logout</router-link>
-<!--           <button class="bg-transparent border-0" @click="logout()">Logout</button>-->
+<!--          <li >-->
+<!--            <router-link class="nav-link" to="/" >Logout</router-link>-->
+<!--&lt;!&ndash;           <button class="bg-transparent border-0" @click="logout()">Logout</button>&ndash;&gt;-->
+<!--          </li>-->
+          <li v-if="user===null"  class="nav-item">
+            <router-link class="nav-link" to="/Login">Login</router-link>
+          </li>
+          <li v-if="user" @click="logout($event)" class="nav-item">
+            <router-link class="nav-link" to="/Login">Logout</router-link>
           </li>
           <!-- Dropdown -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
+
+
+
+
+
+        <li v-if="user!=null &&user.role==='programmer'" class="nav-item dropdown cursor">
+          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
+             aria-haspopup="true" aria-expanded="false">Programmer Options</a>
+          <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+            <router-link class="dropdown-item" to="/user/announcments">Announcements</router-link>
+          </div>
+        </li>
+          <li v-if="user!=null &&user.role==='manager'" class="nav-item dropdown cursor">
+            <a class="nav-link dropdown-toggle" id="navbarDropdownMenu" data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">Manager Options</a>
+            <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenu">
+              <router-link class="dropdown-item" to="/user/addAnnouncments">AddAnnouncements</router-link>
             </div>
           </li>
-
-
         </ul>
         <!-- Links -->
 
@@ -67,15 +79,18 @@
     methods:{
       logout($event){
         $event.preventDefault()
+
         const token = `Bearer ${localStorage.getItem('access_token')}`
         axios.post('http://127.0.0.1:8000/api/auth/logout', null, {
           headers: {
             'Authorization': token
           }
         }).then(res => {
+          this.$store.commit('setUser', null)
           localStorage.removeItem("user")
           localStorage.removeItem("access_token")
-          this.$store.commit('setUser', null)
+          console.log(this.user)
+          console.log(localStorage.user)
           this.$router.push('/login')
         })
       }
@@ -95,6 +110,9 @@
     align-items: center;
     padding: 0 0.5%;
     box-sizing: border-box;
+  }
+  .cursor{
+    cursor: pointer;
   }
   .links{
     display: flex;

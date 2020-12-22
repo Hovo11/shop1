@@ -33,6 +33,9 @@ export default {
 </script>
 
 <style>
+body,html{
+  margin-bottom: 50px;
+}
 #app {
 font-family: "Droid Sans";
 }
