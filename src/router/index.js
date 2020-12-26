@@ -4,7 +4,7 @@ import authRoutes from '../components/Auth/auth-routes.js'
 //not found
 import NotFound from "../components/404/NotFound";
 import adminRoutes from '../components/admin/admin-router'
-import announcments from "../components/Auth/announcments/announcment-routes";
+import cars from "../components/Auth/cars/car-routes";
 
 import auth from "../middlewares/auth";
 import guest from "../middlewares/guest";
@@ -20,7 +20,7 @@ const router= new Router({
       path: '/',
       redirect:'/login'
     },
-    ...announcments,
+    ...cars,
     ...adminRoutes,
     ...authRoutes,
     {

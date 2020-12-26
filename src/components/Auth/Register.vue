@@ -1,74 +1,109 @@
-
 <template>
   <div class="jumbotron">
-    <div class="container">
+    <div class="container m-auto" >
       <div class="row">
         <div class="col-sm-8 offset-sm-2">
-          <div>
-            <form @submit.prevent="handleSubmit">
-              <div class="form-group">
-                <label for="firstName">First Name</label>
-                <input type="text" v-model="new_user.name" id="firstName" name="firstName" class="form-control" :class="{ 'is-invalid': submitted && $v.new_user.name.$error }" />
-                <div v-if="submitted && !$v.new_user.name.required" class="invalid-feedback">First Name is required</div>
-              </div>
-              <div class="form-group">
-                <label for="lastName">Last Name</label>
-                <input type="text" v-model="new_user.surname" id="lastName" name="lastName" class="form-control" :class="{ 'is-invalid': submitted && $v.new_user.surname.$error }" />
-                <div v-if="submitted && !$v.new_user.surname.required" class="invalid-feedback">Last Name is required</div>
-              </div>
-
-              <div class="form-group">
-                <label for="age">Age</label>
-                <input type="text" v-model="new_user.age" id="age" name="age" class="form-control" :class="{ 'is-invalid': submitted && $v.new_user.age.$error }" />
-                <div v-if="submitted && !$v.new_user.age.required" class="invalid-feedback">age is required</div>
-                <div v-if="submitted && !$v.new_user.age.numeric" class="invalid-feedback">write numbers</div>
-              </div>
-
-              <div class="form-group">
-                <label for="role" >Role</label>
-
-                <div id="role" class="col-md-6" :class="{ 'is-invalid': submitted && $v.new_user.role.$error }">
-                  <input type="radio" id="manager" name="role" value="manager" v-model="new_user.role" >
-                  <label for="manager">manager</label><br>
-                  <input type="radio" id="developer" name="role" value="programmer"  v-model="new_user.role">
-                  <label for="developer">developer</label><br>
+          <ValidationObserver v-slot="{handleSubmit}" class="m-auto">
+            <form @submit.prevent="handleSubmit(onSubmit) " enctype="multipart/form-data">
+              <ValidationProvider name="name" rules="required" v-slot="{errors}">
+                <div class="form-group ">
+                  <label for="name" class="text-center-css">Name</label>
+                  <input id="name" type="text" class="form-control " v-bind:class="{ 'is-invalid': errors[0] }"
+                         v-model="formData.name">
+                  <small class="text-danger">
+                    {{ errors[0] }}
+                  </small>
                 </div>
-                <div v-if="submitted && !$v.new_user.role.required" class="invalid-feedback">Role is required</div>
-              </div>
-
-
-
-
-
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" v-model="new_user.email" id="email" name="email" class="form-control" :class="{ 'is-invalid': submitted && $v.new_user.email.$error }" />
-                <div v-if="submitted && $v.new_user.email.$error" class="invalid-feedback">
-                  <span v-if="!$v.new_user.email.required">Email is required</span>
-                  <span v-if="!$v.new_user.email.email">Email is invalid</span>
+              </ValidationProvider>
+              <ValidationProvider name="surname" rules="required" v-slot="{errors}">
+                <div class="form-group ">
+                  <label for="surname" class="text-center-css">Surname</label>
+                  <input id="surname" type="text" class="form-control " v-bind:class="{ 'is-invalid': errors[0] }"
+                         v-model="formData.surname">
+                  <small class="text-danger">
+                    {{ errors[0] }}
+                  </small>
                 </div>
-              </div>
-              <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" v-model="new_user.password" id="password" name="password" class="form-control" :class="{ 'is-invalid': submitted && $v.new_user.password.$error }" />
-                <div v-if="submitted && $v.new_user.password.$error" class="invalid-feedback">
-                  <span v-if="!$v.new_user.password.required">Password is required</span>
-                  <span v-if="!$v.new_user.password.minLength">Password must be at least 6 characters</span>
+              </ValidationProvider>
+              <ValidationProvider name="email" rules="required|email" v-slot="{errors}">
+                <div class="form-group ">
+                  <label for="email" class="text-center-css">Email</label>
+                  <input id="email" type="text" class="form-control " v-bind:class="{ 'is-invalid': errors[0] }"
+                         v-model="formData.email">
+                  <small class="text-danger">
+                    {{ errors[0] }}
+                  </small>
                 </div>
-              </div>
-              <div class="form-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" v-model="new_user.confirmPassword" id="confirmPassword" name="confirmPassword" class="form-control" :class="{ 'is-invalid': submitted && $v.new_user.confirmPassword.$error }" />
-                <div v-if="submitted && $v.new_user.confirmPassword.$error" class="invalid-feedback">
-                  <span v-if="!$v.new_user.confirmPassword.required">Confirm Password is required</span>
-                  <span v-else-if="!$v.new_user.confirmPassword.sameAsPassword">Passwords must match</span>
+              </ValidationProvider>
+              <ValidationProvider name="address" rules="required" v-slot="{errors}">
+                <div class="form-group ">
+                  <label for="address" class="text-center-css">address</label>
+                  <input id="address" type="text" class="form-control " v-bind:class="{ 'is-invalid': errors[0] }"
+                         v-model="formData.address">
+                  <small class="text-danger">
+                    {{ errors[0] }}
+                  </small>
                 </div>
-              </div>
+              </ValidationProvider>
+              <ValidationProvider name="phone" rules="required|numeric|min:6" v-slot="{errors}">
+                <div class="form-group ">
+                  <label for="phone" class="text-center-css">Phone</label>
+                  <input id="phone" type="text" class="form-control " v-bind:class="{ 'is-invalid': errors[0] }"
+                         v-model="formData.phone">
+                  <small class="text-danger">
+                    {{ errors[0] }}
+                  </small>
+                </div>
+              </ValidationProvider>
+              <ValidationProvider name="type" rules="required" v-slot="{errors}">
+                <div class="form-group d-flex justify-content-center ">
+                  <div class="mr-4">
+                    <input type="radio" id="seller" name="type" value="seller" v-model="formData.type">
+                    <label for="seller">Seller</label><br>
+                  </div>
+
+                  <div class="ml-4">
+                    <input type="radio" id="customer" name="type" value="customer" v-model="formData.type">
+                    <label for="customer">Customer</label><br>
+                  </div>
+
+                  <small class="text-danger">
+                    {{ errors[0] }}
+                  </small>
+                </div>
+              </ValidationProvider>
+              <ValidatonProvider>
+                <div class="form-group">
+                  <label for="file" >Image</label>
+                  <img v-if="image" :src="image" class="img-responsive" height="70" width="90">
+                  <input id="file" type="file" v-on:change="onImageChange" class="form-control-file ">
+                </div>
+              </ValidatonProvider>
+              <ValidationProvider name="password" rules="required|min:8" v-slot="{errors}">
+                <div class="form-group ">
+                  <label for="password" class="text-center-css">Password</label>
+                  <input id="password" type="password" class="form-control " v-bind:class="{ 'is-invalid': errors[0] }"
+                         v-model="formData.password">
+                  <small class="text-danger">
+                    {{ errors[0] }}
+                  </small>
+                </div>
+              </ValidationProvider>
+              <ValidationProvider name="confirm" rules="required|confirmed:password" v-slot="{errors}">
+                <div class="form-group ">
+                  <label for="confirmPassword" class="text-center-css">Confirm Password</label>
+                  <input id="confirmPassword" type="password" class="form-control "
+                         v-bind:class="{ 'is-invalid': errors[0] }" v-model="formData.confirmPassword">
+                  <small class="text-danger">
+                    {{ errors[0] }}
+                  </small>
+                </div>
+              </ValidationProvider>
               <div class="form-group">
-                <button class="btn btn-primary">Register</button>
               </div>
+              <input type="submit" class="btn btn-primary" value="Submit">
             </form>
-          </div>
+          </ValidationObserver>
         </div>
       </div>
     </div>
@@ -76,56 +111,81 @@
 </template>
 
 <script>
-import { required,numeric, email, minLength, sameAs } from "vuelidate/lib/validators";
 import axios from "axios";
 
 export default {
   name: "app",
   data() {
     return {
-      new_user: {
+      formData: {
         name: "",
         surname: "",
         email: "",
-        age:"",
+        phone: "",
+        address: "",
         password: "",
-        role: "",
+        image: "",
+        type: "",
         confirmPassword: ""
+
       },
-      submitted: false
+      image: null
     };
   },
-  validations: {
-    new_user: {
-      name: { required },
-      surname: { required },
-      role: { required },
-      email: { required, email },
-      age: {required,numeric},
-      password: { required, minLength: minLength(6) },
-      confirmPassword: { required, sameAsPassword: sameAs('password') }
-    }
-  },
+
   methods: {
-    handleSubmit(e) {
-      this.submitted = true;
-      // stop here if form is invalid
-      this.$v.$touch();
-      if (this.$v.$invalid) {
+    onImageChange(e) {
+      let files = e.target.files || e.dataTransfer.files;
+      if (!files.length)
         return;
-      }
-      console.log(this.new_user)
-     this.signup()
+      this.createImage(files[0]);
     },
-    signup() {
-      axios.post('http://127.0.0.1:8000/api/auth/signUp',this.new_user).then(res=>{
+    createImage(file) {
+      let reader = new FileReader();
+      let vm = this;
+      reader.onload = (e) => {
+        vm.image = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+    onSubmit() {
+      this.signup()
+    },
+    async   signup() {
+      this.formData.image = this.image
+      axios.post('http://127.0.0.1:8000/api/auth/signUp', this.formData).then(res => {
         console.log(res.data)
-        this.$router.push("/login")
-      }).catch(err=>{
+
+        // this.$router.push("/login")
+         this.$router.push("/emailVerify")
+      }).catch(err => {
         console.log(err.response.data)
       })
     }
   }
-  }
+}
 
 </script>
+<style scoped>
+body{margin: 0}
+.custom-file-input {
+  content: 'Select some files';
+  display: inline-block;
+  background: linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
+.text-center-css {
+  display: flex;
+  justify-content: center;
+}
+
+</style>

@@ -1,19 +1,37 @@
 <template>
+  <div>
   <div class="container d-flex justify-content-center wh p-3">
-    <div class="card text-white bg-dark mb-3 ">
+    <div class="card text-white bg-light mb-3 " style="width: 300px">
       <div class="card-header text-center">Profile</div>
       <div class="container">
-        <h4 class="card-title">Name: {{user.name}}</h4>
-        <h4 class="card-title"> Email: {{user.email}}</h4>
-        <h4 class="card-title">Age: {{user.age}}</h4>
-        <p class="card-text">Role: {{user.role}}</p>
-        <p class="card-text">Type: {{user.type}}</p>
+        <h4 ><img :src="`${sending_info.image}`" height="90" width="110" style="margin-left: 70px" /></h4>
+        <hr>
+        <input v-if="editable" v-model="current_user.name" type="text">
+        <h4 v-else class="card-title color " v-bind:class="{ animation_remove: !editable }" v-model="current_user.name">Name: {{sending_info.name}}     </h4>
+        <hr>
+        <input v-if="editable" v-model="current_user.email" type="text">
+        <h4 v-else class="card-title color " v-bind:class="{ animation_remove: !editable }" v-model="current_user.email"> Email: {{sending_info.email}}</h4>
+        <hr>
+        <input v-if="editable" v-model="current_user.phone" type="text">
+        <h4 v-else class="card-title color " v-bind:class="{ animation_remove: !editable }"  v-model="current_user.phone">Phone: {{sending_info.phone}}</h4>
+        <hr>
+
+        <p class="card-text color " v-model="current_user.type">Type: {{sending_info.type}}</p>
+        <p class="card-text color"  v-model="current_user.role">Role: {{sending_info.role}}</p>
+        <div class="text-center">
+          <button v-if="!editable" class="btn btn-primary " @click="edit()">Edit</button>
+          <button v-else-if="editable" class="btn btn-primary" @click="save()">Save</button>
+        </div>
+
       </div>
     </div>
+
+
 
   </div>
 
 
+</div>
 </template>
 
 <script>
@@ -22,7 +40,10 @@ export default {
   name: "HelloUser",
   data(){
     return{
-
+      current_user: {},
+         editable:false,
+      sending_info:{},
+      image: null
     }
   },
   computed:{
@@ -30,14 +51,57 @@ export default {
   },
 
   mounted() {
-    this.storeUser();
-    let type= JSON.parse(localStorage.getItem('user'))
-    console.log(type.role)
-
+this.getme()
   },
 
   methods:{
 
+
+
+    // send(){
+    //   const formdata=new FormData();
+    //   formdata.set('image',this.image)
+    //   const token = `Bearer ${localStorage.getItem('access_token')}`
+    //   axios.post('http://127.0.0.1:8000/api/admin/image',formdata, {
+    //     headers: {
+    //       'Authorization': token
+    //     }
+    //   }).then(res => {
+    //     console.log(res.data)
+    //   }).catch(err=>{
+    //
+    //   })
+    // },
+
+
+  edit(){
+   this.editable=true
+
+ },
+    getme(){
+      const token = `Bearer ${localStorage.getItem('access_token')}`
+      axios.post('http://127.0.0.1:8000/api/auth/me', null, {
+        headers: {
+          'Authorization': token
+        }
+      }).then(res => {
+        this.sending_info=res.data
+      })
+    },
+    save(){
+      this.editable=false
+      const token = `Bearer ${localStorage.getItem('access_token')}`
+      axios.post('http://127.0.0.1:8000/api/user/save', this.current_user, {
+        headers: {
+          'Authorization': token
+        }
+      }).then(res => {
+        this.getme()
+
+      }).catch(err=>{
+
+      })
+    }
 
 }}
 </script>
@@ -54,5 +118,21 @@ small {
   display: block;
   line-height: 1.428571429;
   color: #999;
+}
+
+.color {
+  color: black;
+  text-align: center;
+}
+
+.animation_remove {
+  animation-name: right;
+  animation-duration: 2s;
+}
+
+@keyframes right {
+  from   {opacity: 0; left:400px; top:40px;}
+  /*to  {opacity:1;left:800px; top:40px;}*/
+
 }
 </style>

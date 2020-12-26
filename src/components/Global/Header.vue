@@ -1,5 +1,6 @@
 <template>
   <div class="header-container">
+
     <nav class="navbar navbar-expand-lg navbar-dark primary-color">
 
       <!-- Navbar brand -->
@@ -16,53 +17,46 @@
 
         <!-- Links -->
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home
-              <span class="sr-only">(current)</span>
-            </a>
+          <li class="nav-item ">
+            <router-link class="nav-link" to="/user/cars">Shop </router-link>
+
+          </li>
+          <li v-if="user!=null &&user.role==='admin'" class="nav-item">
+            <router-link class="nav-link" to="/admin/users">AllUsers</router-link>
           </li>
 
-          <li  v-if="user===null" class="nav-item">
+          <li  v-if="!user&&user===null" class="nav-item">
             <router-link class="nav-link" to="/signup">Register</router-link>
           </li>
 <!--          <li >-->
 <!--            <router-link class="nav-link" to="/" >Logout</router-link>-->
 <!--&lt;!&ndash;           <button class="bg-transparent border-0" @click="logout()">Logout</button>&ndash;&gt;-->
 <!--          </li>-->
-          <li v-if="user===null"  class="nav-item">
-            <router-link class="nav-link" to="/Login">Login</router-link>
+
+          <li v-if="user!=null &&user.type==='seller'" class="nav-item">
+            <router-link class="nav-link" to="/user/myCars">MyCars</router-link>
           </li>
-          <li v-if="user" @click="logout($event)" class="nav-item">
-            <router-link class="nav-link" to="/Login">Logout</router-link>
+
+<!--        <li v-if="user!=null &&user.type==='customer'" class="nav-item dropdown cursor">-->
+<!--          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"-->
+<!--             aria-haspopup="true" aria-expanded="false">Customer Options</a>-->
+<!--          <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">-->
+<!--            <router-link class="dropdown-item" to="/user/cars">Cars</router-link>-->
+<!--          </div>-->
+<!--        </li>-->
+          <li v-if="user!=null &&user.type==='seller'" class="nav-item ">
+              <router-link class="nav-link" to="/user/addCars">AddCars</router-link>
           </li>
-          <!-- Dropdown -->
-
-
-
-
-
-        <li v-if="user!=null &&user.role==='programmer'" class="nav-item dropdown cursor">
-          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
-             aria-haspopup="true" aria-expanded="false">Programmer Options</a>
-          <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
-            <router-link class="dropdown-item" to="/user/announcments">Announcements</router-link>
-          </div>
-        </li>
-          <li v-if="user!=null &&user.role==='manager'" class="nav-item dropdown cursor">
-            <a class="nav-link dropdown-toggle" id="navbarDropdownMenu" data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false">Manager Options</a>
-            <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenu">
-              <router-link class="dropdown-item" to="/user/addAnnouncments">AddAnnouncements</router-link>
-            </div>
+          <li v-if="user!=null" class="nav-item ">
+            <router-link class="nav-link" to="/user/hello">My Profile</router-link>
           </li>
+          <li  class="nav-item">
+            <router-link v-if="user===null" class="nav-link" to="/Login">Login</router-link>
+            <router-link v-else class="nav-link"  @click.native="logout($event)" to="/Login">Logout</router-link>
+          </li>
+
         </ul>
         <!-- Links -->
-
-        <form class="form-inline">
-          <div class="md-form my-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          </div>
-        </form>
       </div>
       <!-- Collapsible content -->
 
@@ -76,6 +70,9 @@
 
   export default {
     name: "Header",
+    mounted() {
+       this.storeUser()
+      },
     methods:{
       logout($event){
         $event.preventDefault()
@@ -86,11 +83,16 @@
             'Authorization': token
           }
         }).then(res => {
+          this.storeUser()
           this.$store.commit('setUser', null)
           localStorage.removeItem("user")
           localStorage.removeItem("access_token")
+          localStorage.removeItem("UserInfo")
+          localStorage.removeItem("my_info")
+          localStorage.removeItem("emailForPass")
           console.log(this.user)
           console.log(localStorage.user)
+
           this.$router.push('/login')
         })
       }
@@ -105,7 +107,7 @@
     width: 100%;
 
 
-    background-color: #1e95f5;
+    background-color: #001f3f;
     justify-content: space-between;
     align-items: center;
     padding: 0 0.5%;

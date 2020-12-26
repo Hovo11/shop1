@@ -3,7 +3,7 @@
     <Header />
 
 <router-view/>
-    <Footer/>
+  <Footer/>
   </div>
 
 </template>
@@ -22,6 +22,7 @@ export default {
   },
   mounted() {
     this.storeUser();
+
   },
   methods: {
 
@@ -34,6 +35,7 @@ export default {
 
 <style>
 body,html{
+
   margin-bottom: 50px;
 }
 #app {

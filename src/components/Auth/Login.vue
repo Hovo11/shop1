@@ -23,7 +23,7 @@
 
 
                       </div>
-                      <span v-if="erorrs_laravel.unauthorized">Email doesn't exist</span>
+                      <span v-if="erorrs_laravel.unauthorized" style="color: red">Invalid email or password</span>
                     </div>
                     <div class="form-group">
                       <label for="password">Password</label>
@@ -37,7 +37,8 @@
                     </div>
 
                     <div class="form-group">
-                      <button class="btn btn-primary">Register</button>
+                      <button class="btn btn-primary">Login</button>
+                      <router-link class="nav-link" to="/forgotPassword">Forgot Password</router-link>
                     </div>
                   </form>
                 </div>
@@ -76,6 +77,9 @@
             password: { required, minLength: minLength(6) },
           }
         },
+        beforeMount() {
+          this.user=null
+          },
         methods: {
 
           getUser() {
@@ -88,9 +92,10 @@
             axios.post('http://127.0.0.1:8000/api/auth/login',this.login_user).then(res=>{
               localStorage.setItem('access_token',res.data.access_token);
               this.storeUser()
-              this.$router.push('/user/hello')
+             this.$router.push('/user/hello')
             }).catch(err=>{
               this.erorrs_laravel.unauthorized=err.response.data.error
+              localStorage.setItem('emailForPass',this.login_user.email);
               console.log(this.erorrs_laravel.unauthorized)
 
             })
